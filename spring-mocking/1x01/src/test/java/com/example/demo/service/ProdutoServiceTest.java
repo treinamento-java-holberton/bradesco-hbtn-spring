@@ -11,8 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,17 +35,15 @@ class ProdutoServiceTest {
         var produto = new Produto();
         when(produtoRepository.findById(any())).thenReturn(Optional.of(produto));
 
-        assertThat(produtoService.buscarPorId(1L)).isEqualTo(produto);
+        assertEquals(produto, produtoService.buscarPorId(1L));
         verify(produtoRepository).findById(1L);
     }
 
 
     @Test
     void deveLancarExcecaoQuandoProdutoNaoExistir() {
-
-        assertThatThrownBy(() -> produtoService.buscarPorId(1L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Produto não encontrado");
+        var exception = assertThrows(RuntimeException.class, () -> produtoService.buscarPorId(1L));
+        assertEquals("Produto não encontrado", exception.getMessage());
         verify(produtoRepository).findById(1L);
     }
 }
